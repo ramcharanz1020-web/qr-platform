@@ -41,6 +41,7 @@ exports.createQR = async (req, res) => {
     });
 
   } catch (error) {
+    console.log("QR CREATE ERROR:", error.message); // ← ADDED
     res.status(500).json({ error: error.message });
   }
 };
