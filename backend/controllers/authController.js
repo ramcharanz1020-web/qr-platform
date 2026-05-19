@@ -6,6 +6,9 @@ exports.register = async (req, res) => {
   try {
 
     const { name, email, password } = req.body;
+    if (!name || !email || !password) {
+      return res.status(400).json({ error: "All fields are required" });
+    }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -19,6 +22,11 @@ exports.register = async (req, res) => {
     });
 
   } catch (error) {
+    if (error.code === "ER_DUP_ENTRY") {
+      return res.status(409).json({
+        error: "Email is already registered"
+      });
+    }
 
     res.status(500).json({
       error: error.message
