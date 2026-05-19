@@ -6,6 +6,9 @@ const pool = mysql.createPool({
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
   port: process.env.DB_PORT,
+  ssl: {
+    rejectUnauthorized: false,
+  },
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
@@ -14,10 +17,10 @@ const pool = mysql.createPool({
 async function testConnection() {
   try {
     const connection = await pool.getConnection();
-    console.log("Database connected");
+    console.log("✅ Database connected");
     connection.release();
   } catch (error) {
-    console.log("Database connection failed:", error);
+    console.log("❌ Database connection failed:", error.message);
   }
 }
 
