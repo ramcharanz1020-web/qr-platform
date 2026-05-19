@@ -31,6 +31,9 @@ router.delete(
   deleteQR
 );
 
-router.get("/:token", redirectQR);
+router.get("/:token", (req, res) => {
+  console.log("Token received:", req.params.token);
+  redirectQR(req, res);
+});
 
 module.exports = router;
