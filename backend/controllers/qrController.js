@@ -21,7 +21,7 @@ exports.createQR = async (req, res) => {
       if (!req.file) {
         return res.status(400).json({ message: "File required" });
       }
-      qrData = `${BACKEND_URL}/uploads/${req.file.filename}`;
+      qrData = req.file.path; // Cloudinary returns the full URL in req.file.pat
     }
 
     const redirectUrl = `${BACKEND_URL}/api/qr/${token}`;
