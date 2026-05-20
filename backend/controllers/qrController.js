@@ -4,13 +4,7 @@ const { v4: uuidv4 } = require("uuid");
 
 exports.createQR = async (req, res) => {
   try {
-    console.log("BODY:", req.body);
-    console.log("FILE:", req.file);
-
     const { destination_url, qr_type, text_content } = req.body;
-
-    console.log("qr_type:", qr_type);
-    console.log("destination_url:", destination_url);
 
     const user_id = req.user.id;
     const token = uuidv4();
@@ -30,8 +24,6 @@ exports.createQR = async (req, res) => {
       qrData = `${BACKEND_URL}/uploads/${req.file.filename}`;
     }
 
-    console.log("qrData:", qrData);
-
     const redirectUrl = `${BACKEND_URL}/api/qr/${token}`;
     const qrImage = await QRCode.toDataURL(redirectUrl);
 
@@ -41,8 +33,6 @@ exports.createQR = async (req, res) => {
       [user_id, token, qr_type, qrData, qrImage, true, qrData]
     );
 
-    console.log("QR saved successfully, token:", token);
-
     res.status(201).json({
       message: "QR created successfully",
       qrImage,
@@ -50,7 +40,6 @@ exports.createQR = async (req, res) => {
     });
 
   } catch (error) {
-    console.log("QR CREATE ERROR:", error.message);
     res.status(500).json({ error: error.message });
   }
 };
@@ -58,23 +47,32 @@ exports.createQR = async (req, res) => {
 exports.redirectQR = async (req, res) => {
   try {
     const { token } = req.params;
-    console.log("Scanning token:", token);
 
     const [rows] = await db.query(
       "SELECT * FROM qrcodes WHERE qr_token = ?",
       [token]
     );
 
-    console.log("Rows found:", rows.length);
-
     if (rows.length === 0) {
       return res.status(404).json({ message: "QR not found" });
     }
 
-    res.redirect(rows[0].destination_url);
+    const qr = rows[0];
+
+    if (qr.qr_type === "text") {
+      return res.send(`
+        <html>
+          <body style="font-family:sans-serif;padding:40px;text-align:center;">
+            <h2>QR Text Content</h2>
+            <p style="font-size:24px;">${qr.original_data}</p>
+          </body>
+        </html>
+      `);
+    }
+
+    res.redirect(qr.original_data);
 
   } catch (error) {
-    console.log("REDIRECT ERROR:", error.message);
     res.status(500).json({ error: error.message });
   }
 };
