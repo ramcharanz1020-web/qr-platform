@@ -97,6 +97,8 @@ if (file) {
   );
 
 }
+formData.append("password", password);
+formData.append("expiry_date", expiryDate);
 
 const response = await API.post(
   "/qr/create",
@@ -355,6 +357,20 @@ const response = await API.post(
 
             )
           }
+          <input
+  type="password"
+  placeholder="Set password (optional)"
+  value={password}
+  onChange={(e) => setPassword(e.target.value)}
+  className="border border-green-300 p-3 w-full rounded-lg mb-4"
+/>
+
+<input
+  type="datetime-local"
+  value={expiryDate}
+  onChange={(e) => setExpiryDate(e.target.value)}
+  className="border border-green-300 p-3 w-full rounded-lg mb-4"
+/>
 
           <button
             onClick={generateQR}
