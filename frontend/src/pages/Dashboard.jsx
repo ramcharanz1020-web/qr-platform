@@ -15,6 +15,9 @@ function Dashboard() {
   const [qrImage, setQrImage] = useState("");
 
   const [qrHistory, setQrHistory] = useState([]);
+  
+  const [password, setPassword] = useState("");
+const [expiryDate, setExpiryDate] = useState("");
 
   const [loading, setLoading] = useState(false);
 const [activeSection, setActiveSection] = useState("generate");
